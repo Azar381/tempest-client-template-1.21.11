@@ -2,7 +2,7 @@ package tempestclient.gui;
 
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 
 /**
  * Lightweight, client-side input display. It only reads the local player's
@@ -11,7 +11,7 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 public final class KeystrokesHud {
     private KeystrokesHud() {}
 
-    public static void render(GuiGraphicsExtractor graphics, DeltaTracker deltaTracker) {
+    public static void render(GuiGraphics graphics, DeltaTracker deltaTracker) {
         Minecraft client = Minecraft.getInstance();
         if (client.player == null || client.options.hideGui) {
             return;
@@ -40,12 +40,12 @@ public final class KeystrokesHud {
                 client.options.keyJump.isDown(), 63);
     }
 
-    private static void drawKey(GuiGraphicsExtractor graphics, Minecraft client,
+    private static void drawKey(GuiGraphics graphics, Minecraft client,
                                 String label, int x, int y, boolean pressed) {
         drawKey(graphics, client, label, x, y, pressed, 18);
     }
 
-    private static void drawKey(GuiGraphicsExtractor graphics, Minecraft client,
+    private static void drawKey(GuiGraphics graphics, Minecraft client,
                                 String label, int x, int y, boolean pressed, int width) {
         int background = pressed ? 0xFFE3263A : 0xCC15151C;
         int border = pressed ? 0xFFFF6674 : 0xFF454550;
