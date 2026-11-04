@@ -18,6 +18,10 @@ import tempestclient.gui.TempestScreen;
 public class TempestClientClient implements ClientModInitializer {
 
     private static KeyMapping openGuiKey;
+    private static KeyMapping fullbrightKey;
+    private static KeyMapping brightnessDownKey;
+    private static KeyMapping brightnessUpKey;
+    private static KeyMapping balancedPerformanceKey;
 
     @Override
     public void onInitializeClient() {
@@ -26,16 +30,12 @@ public class TempestClientClient implements ClientModInitializer {
                         Identifier.fromNamespaceAndPath("tempest-client", "general")
                 );
 
-        openGuiKey = KeyBindingHelper.registerKeyBinding(
-                new KeyMapping(
-                        "key.tempest-client.open_gui",
-                        InputConstants.Type.KEYSYM,
-                        GLFW.GLFW_KEY_F10,
-                        category
-                )
-        );
+        openGuiKey = register("key.tempest-client.open_gui", GLFW.GLFW_KEY_F10, category);
+        fullbrightKey = register("key.tempest-client.fullbright", GLFW.GLFW_KEY_F7, category);
+        brightnessDownKey = register("key.tempest-client.brightness_down", GLFW.GLFW_KEY_F8, category);
+        brightnessUpKey = register("key.tempest-client.brightness_up", GLFW.GLFW_KEY_F9, category);
+        balancedPerformanceKey = register("key.tempest-client.balanced_performance", GLFW.GLFW_KEY_F6, category);
 
-        // Client-side HUD overlay: reads local input only.
         HudElementRegistry.addLast(
                 Identifier.fromNamespaceAndPath("tempest-client", "keystrokes"),
                 KeystrokesHud::render
@@ -49,6 +49,43 @@ public class TempestClientClient implements ClientModInitializer {
                     client.setScreen(new TempestScreen());
                 }
             }
+
+            while (fullbrightKey.consumeClick()) {
+                FullbrightController.toggle();
+            }
+
+            while (brightnessDownKey.consumeClick()) {
+                FullbrightController.setBrightness(
+                        FullbrightController.getBrightness() - 0.1
+                );
+            }
+
+            while (brightnessUpKey.consumeClick()) {
+                FullbrightController.setBrightness(
+                        FullbrightController.getBrightness() + 0.1
+                );
+            }
+
+            while (balancedPerformanceKey.consumeClick()) {
+                BalancedPerformance.toggle();
+            }
         });
+
+        ClientTickEvents.CLIENT_STOPPING.register(client -> {
+            FullbrightController.restore();
+            BalancedPerformance.restore();
+        });
+    }
+
+    private static KeyMapping register(String translationKey, int keyCode,
+                                       KeyMapping.Category category) {
+        return KeyBindingHelper.registerKeyBinding(
+                new KeyMapping(
+                        translationKey,
+                        InputConstants.Type.KEYSYM,
+                        keyCode,
+                        category
+                )
+        );
     }
 }
