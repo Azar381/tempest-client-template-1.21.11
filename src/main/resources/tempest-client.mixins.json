@@ -5,9 +5,7 @@
   "mixins": [
     "ExampleMixin"
   ],
-  "client": [
-    "FullbrightMixin"
-  ],
+  "client": [],
   "injectors": {
     "defaultRequire": 1
   },
