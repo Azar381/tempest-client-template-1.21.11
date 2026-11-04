@@ -25,6 +25,11 @@ public class TempestClientClient implements ClientModInitializer {
     private static KeyMapping brightnessUpKey;
     private static KeyMapping balancedPerformanceKey;
 
+    public static KeyMapping getFullbrightKey() { return fullbrightKey; }
+    public static KeyMapping getBrightnessDownKey() { return brightnessDownKey; }
+    public static KeyMapping getBrightnessUpKey() { return brightnessUpKey; }
+    public static KeyMapping getBalancedPerformanceKey() { return balancedPerformanceKey; }
+
     @Override
     public void onInitializeClient() {
         KeyMapping.Category category =
