@@ -9,10 +9,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import tempestclient.FullbrightController;
 
-/**
- * Raises the client lightmap brightness while Tempest's brightness boost is enabled.
- * This changes only the rendered lightmap; it does not change world light levels.
- */
 @Mixin(LightTexture.class)
 public class FullbrightMixin {
     @Inject(
