@@ -1,9 +1,16 @@
-
 package tempestclient.gui;
 
+import com.mojang.blaze3d.platform.InputConstants;
+import net.minecraft.client.KeyMapping;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import org.lwjgl.glfw.GLFW;
+
+import tempestclient.BalancedPerformance;
+import tempestclient.FullbrightController;
+import tempestclient.TempestClientClient;
 
 public class TempestScreen extends Screen {
 
@@ -13,167 +20,120 @@ public class TempestScreen extends Screen {
     private static final int WHITE = 0xFFFFFFFF;
     private static final int MUTED = 0xFF9999A8;
 
+    private KeyMapping waitingForKey;
+
     public TempestScreen() {
         super(Component.literal("Tempest Client"));
     }
 
     @Override
-    public void render(
-            GuiGraphics graphics,
-            int mouseX,
-            int mouseY,
-            float delta
-    ) {
+    protected void init() {
+        int left = this.width / 2 - 190;
+        int top = this.height / 2 - 125;
+        int col1 = left + 18;
+        int col2 = left + 202;
+        int width = 170;
+        int row = top + 72;
+
+        addRenderableWidget(Button.builder(
+                Component.literal("Toggle Brightness Boost"),
+                button -> FullbrightController.toggle()
+        ).bounds(col1, row, width, 20).build());
+
+        addRenderableWidget(Button.builder(
+                Component.literal("Toggle Balanced Performance"),
+                button -> BalancedPerformance.toggle()
+        ).bounds(col2, row, width, 20).build());
+
+        addRenderableWidget(Button.builder(
+                Component.literal("Brightness -"),
+                button -> FullbrightController.setBrightness(
+                        FullbrightController.getBrightness() - 0.1
+                )
+        ).bounds(col1, row + 28, width, 20).build());
+
+        addRenderableWidget(Button.builder(
+                Component.literal("Brightness +"),
+                button -> FullbrightController.setBrightness(
+                        FullbrightController.getBrightness() + 0.1
+                )
+        ).bounds(col2, row + 28, width, 20).build());
+
+        addRenderableWidget(bindButton("Bind brightness toggle",
+                TempestClientClient.getFullbrightKey(), col1, row + 64, width));
+        addRenderableWidget(bindButton("Bind performance toggle",
+                TempestClientClient.getBalancedPerformanceKey(), col2, row + 64, width));
+        addRenderableWidget(bindButton("Bind brightness down",
+                TempestClientClient.getBrightnessDownKey(), col1, row + 92, width));
+        addRenderableWidget(bindButton("Bind brightness up",
+                TempestClientClient.getBrightnessUpKey(), col2, row + 92, width));
+    }
+
+    private Button bindButton(String label, KeyMapping mapping, int x, int y, int width) {
+        return Button.builder(
+                Component.literal(label + ": " + mapping.getBoundKeyLocalizedText().getString()),
+                button -> waitingForKey = mapping
+        ).bounds(x, y, width, 20).build();
+    }
+
+    @Override
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (waitingForKey != null) {
+            if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
+                waitingForKey = null;
+                return true;
+            }
+
+            waitingForKey.setKey(InputConstants.Type.KEYSYM.getOrCreate(keyCode));
+            KeyMapping.resetMapping();
+            waitingForKey = null;
+            return true;
+        }
+        return super.keyPressed(keyCode, scanCode, modifiers);
+    }
+
+    @Override
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
         int centerX = this.width / 2;
         int centerY = this.height / 2;
+        int left = centerX - 190;
+        int top = centerY - 125;
+        int right = centerX + 190;
+        int bottom = centerY + 125;
 
-        // Main background
-        graphics.fill(
-                0, 0,
-                this.width, this.height,
-                BACKGROUND
-        );
-
-        // Main window
-        int left = centerX - 220;
-        int top = centerY - 140;
-        int right = centerX + 220;
-        int bottom = centerY + 140;
-
+        graphics.fill(0, 0, this.width, this.height, BACKGROUND);
         graphics.fill(left, top, right, bottom, PANEL);
+        graphics.fill(left, top, right, top + 3, ACCENT);
 
-        // Crimson top accent
-        graphics.fill(
-                left, top,
-                right, top + 3,
-                ACCENT
-        );
+        graphics.drawString(this.font, "TEMPEST", left + 18, top + 16, ACCENT);
+        graphics.drawString(this.font, "CLIENT SETTINGS", left + 18, top + 32, WHITE);
+        graphics.drawString(this.font, "1.21.11 | FABRIC", right - 112, top + 24, MUTED);
 
-        // Header
-        graphics.drawString(
-                this.font,
-                "TEMPEST",
-                left + 18,
-                top + 18,
-                ACCENT
-        );
+        graphics.fill(left + 18, top + 55, right - 18, top + 56, 0xFF353540);
 
-        graphics.drawString(
-                this.font,
-                "CLIENT",
-                left + 18,
-                top + 32,
-                WHITE
-        );
+        graphics.drawString(this.font,
+                "Brightness boost: " + (FullbrightController.isEnabled() ? "ON" : "OFF"),
+                left + 18, top + 61, FullbrightController.isEnabled() ? ACCENT : MUTED);
 
-        graphics.drawString(
-                this.font,
-                "1.21.11  |  FABRIC",
-                right - 115,
-                top + 25,
-                MUTED
-        );
-
-        // Separator
-        graphics.fill(
-                left + 15,
-                top + 55,
-                right - 15,
-                top + 56,
-                0xFF353540
-        );
-
-        // Sidebar
-        graphics.fill(
-                left + 12,
-                top + 68,
-                left + 115,
-                bottom - 15,
-                0xFF101015
-        );
-
-        graphics.fill(
-                left + 12,
-                top + 68,
-                left + 15,
-                top + 94,
-                ACCENT
-        );
-
-        graphics.drawString(
-                this.font,
-                "VISUALS",
-                left + 25,
-                top + 77,
-                WHITE
-        );
-
-        graphics.drawString(
-                this.font,
-                "UTILITY",
-                left + 25,
-                top + 110,
-                MUTED
-        );
-
-        graphics.drawString(
-                this.font,
-                "PRACTICE",
-                left + 25,
-                top + 143,
-                MUTED
-        );
-
-        // Main content
-        graphics.drawString(
-                this.font,
-                "Welcome to Tempest",
-                left + 135,
-                top + 75,
-                WHITE
-        );
-
-        graphics.drawString(
-                this.font,
-                "Your client experience starts here.",
-                left + 135,
-                top + 94,
-                MUTED
-        );
-
-        graphics.drawString(
-                this.font,
-                "VISUAL MODULES",
-                left + 135,
-                top + 132,
-                ACCENT
-        );
-
-        graphics.fill(
-                left + 135,
-                top + 151,
-                right - 18,
-                top + 193,
-                0xFF20202A
-        );
-
-        graphics.drawString(
-                this.font,
-                "Visual settings will appear here.",
-                left + 147,
-                top + 167,
-                WHITE
-        );
-
-        // Footer
-        graphics.drawString(
-                this.font,
-                "TEMPEST CLIENT  -  IN DEVELOPMENT",
-                left + 18,
-                bottom - 25,
-                MUTED
-        );
+        graphics.drawString(this.font,
+                "Balanced profile: " + (BalancedPerformance.isEnabled() ? "ON" : "OFF"),
+                left + 202, top + 61, BalancedPerformance.isEnabled() ? ACCENT : MUTED);
 
         super.render(graphics, mouseX, mouseY, delta);
+
+        if (waitingForKey != null) {
+            graphics.drawCenteredString(this.font,
+                    "Press a key to bind (ESC cancels)",
+                    centerX, bottom - 19, ACCENT);
+        } else {
+            graphics.drawString(this.font,
+                    "Click a Bind button, then press your chosen key.",
+                    left + 18, bottom - 19, MUTED);
+        }
+    }
+
+    @Override
+    public boolean isPauseScreen() {
+        return false;
     }
 }
