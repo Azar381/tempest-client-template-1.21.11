@@ -7,9 +7,7 @@ import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 
-/**
- * Lightweight local input HUD with rolling one-second mouse click counters.
- */
+/** Lightweight input display with rolling one-second mouse click counters. */
 public final class KeystrokesHud {
     private static final Deque<Long> leftClicks = new ArrayDeque<>();
     private static final Deque<Long> rightClicks = new ArrayDeque<>();
@@ -30,27 +28,30 @@ public final class KeystrokesHud {
         if (rightPressed && !wasRightPressed) rightClicks.addLast(now);
         wasLeftPressed = leftPressed;
         wasRightPressed = rightPressed;
-
         trim(leftClicks, now);
         trim(rightClicks, now);
 
         int x = 12, y = 12, cell = 18, gap = 3;
-        drawKey(graphics, client, "W", x + cell + gap, y, client.options.keyUp.isDown());
-        drawKey(graphics, client, "A", x, y + cell + gap, client.options.keyLeft.isDown());
-        drawKey(graphics, client, "S", x + cell + gap, y + cell + gap, client.options.keyDown.isDown());
-        drawKey(graphics, client, "D", x + (cell + gap) * 2, y + cell + gap, client.options.keyRight.isDown());
-        drawKey(graphics, client, "LMB", x, y + (cell + gap) * 2, leftPressed, 30);
-        drawKey(graphics, client, "RMB", x + 33, y + (cell + gap) * 2, rightPressed, 30);
-        drawKey(graphics, client, "SPACE", x, y + (cell + gap) * 3, client.options.keyJump.isDown(), 63);
+        int panelWidth = 69, panelHeight = 119;
+        graphics.fill(x - 5, y - 5, x + panelWidth, y + panelHeight, 0xB8101018);
+        graphics.fill(x - 5, y - 5, x + panelWidth, y - 4, 0xFFE3263A);
+        graphics.drawString(client.font, "TEMPEST", x, y - 1, 0xFFE3263A, true);
 
-        graphics.drawString(client.font, "CPS  L " + leftClicks.size() + "  R " + rightClicks.size(),
-                x, y + (cell + gap) * 4 + 2, 0xFFFFFFFF, true);
+        drawKey(graphics, client, "W", x + cell + gap, y + 12, client.options.keyUp.isDown());
+        drawKey(graphics, client, "A", x, y + 12 + cell + gap, client.options.keyLeft.isDown());
+        drawKey(graphics, client, "S", x + cell + gap, y + 12 + cell + gap, client.options.keyDown.isDown());
+        drawKey(graphics, client, "D", x + (cell + gap) * 2, y + 12 + cell + gap, client.options.keyRight.isDown());
+        drawKey(graphics, client, "LMB", x, y + 12 + (cell + gap) * 2, leftPressed, 30);
+        drawKey(graphics, client, "RMB", x + 33, y + 12 + (cell + gap) * 2, rightPressed, 30);
+        drawKey(graphics, client, "SPACE", x, y + 12 + (cell + gap) * 3, client.options.keyJump.isDown(), 63);
+
+        graphics.fill(x, y + 12 + (cell + gap) * 4, x + 63, y + 12 + (cell + gap) * 4 + 1, 0xFF454550);
+        graphics.drawString(client.font, "CPS  " + leftClicks.size() + " / " + rightClicks.size(),
+                x, y + 12 + (cell + gap) * 4 + 5, 0xFFFFFFFF, true);
     }
 
     private static void trim(Deque<Long> clicks, long now) {
-        while (!clicks.isEmpty() && now - clicks.peekFirst() >= 1000L) {
-            clicks.removeFirst();
-        }
+        while (!clicks.isEmpty() && now - clicks.peekFirst() >= 1000L) clicks.removeFirst();
     }
 
     private static void drawKey(GuiGraphics graphics, Minecraft client,
