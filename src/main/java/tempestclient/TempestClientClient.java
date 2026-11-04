@@ -5,6 +5,7 @@ import com.mojang.blaze3d.platform.InputConstants;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 
 import net.minecraft.client.KeyMapping;
@@ -69,6 +70,11 @@ public class TempestClientClient implements ClientModInitializer {
             while (balancedPerformanceKey.consumeClick()) {
                 BalancedPerformance.toggle();
             }
+        });
+
+        ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
+            FullbrightController.restore();
+            BalancedPerformance.restore();
         });
 
         ClientTickEvents.CLIENT_STOPPING.register(client -> {
