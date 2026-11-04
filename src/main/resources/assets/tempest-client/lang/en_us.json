@@ -1,8 +1,4 @@
 {
   "key.category.tempest-client.general": "Tempest Client",
-  "key.tempest-client.open_gui": "Open/Close Tempest GUI",
-  "key.tempest-client.fullbright": "Toggle Brightness Boost",
-  "key.tempest-client.brightness_down": "Decrease Brightness",
-  "key.tempest-client.brightness_up": "Increase Brightness",
-  "key.tempest-client.balanced_performance": "Toggle Balanced Performance"
+  "key.tempest-client.open_gui": "Open/Close Tempest GUI"
 }
