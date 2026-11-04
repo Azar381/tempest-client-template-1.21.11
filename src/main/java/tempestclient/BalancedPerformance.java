@@ -1,15 +1,13 @@
 package tempestclient;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.core.particles.ParticleStatus;
 
 /**
- * A conservative balanced profile that changes only two client graphics
- * options and restores their previous values when disabled.
+ * A conservative client-side profile that reduces entity-shadow rendering
+ * and restores the previous setting when disabled.
  */
 public final class BalancedPerformance {
     private static boolean enabled;
-    private static ParticleStatus previousParticles;
     private static boolean previousEntityShadows;
 
     private BalancedPerformance() {}
@@ -25,10 +23,7 @@ public final class BalancedPerformance {
         if (enabled) {
             restore(client);
         } else {
-            previousParticles = client.options.particles().get();
             previousEntityShadows = client.options.entityShadows().get();
-
-            client.options.particles().set(ParticleStatus.DECREASED);
             client.options.entityShadows().set(false);
             enabled = true;
         }
@@ -39,7 +34,6 @@ public final class BalancedPerformance {
     }
 
     private static void restore(Minecraft client) {
-        client.options.particles().set(previousParticles);
         client.options.entityShadows().set(previousEntityShadows);
         enabled = false;
     }
