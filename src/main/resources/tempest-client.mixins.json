@@ -1,14 +1,17 @@
 {
-	"required": true,
-	"package": "tempestclient.mixin",
-	"compatibilityLevel": "JAVA_21",
-	"mixins": [
-		"ExampleMixin"
-	],
-	"injectors": {
-		"defaultRequire": 1
-	},
-	"overwrites": {
-		"requireAnnotations": true
-	}
+  "required": true,
+  "package": "tempestclient.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "ExampleMixin"
+  ],
+  "client": [
+    "FullbrightMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "overwrites": {
+    "requireAnnotations": true
+  }
 }
