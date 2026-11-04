@@ -2,11 +2,7 @@ package tempestclient;
 
 import net.minecraft.client.Minecraft;
 
-/**
- * A reversible, conservative performance profile. It lowers render and
- * simulation distance only when they are currently above the profile targets,
- * and disables entity shadows. Previous values are restored when switched off.
- */
+/** Reversible low-impact graphics profile for modest hardware. */
 public final class BalancedPerformance {
     private static boolean enabled;
     private static boolean previousEntityShadows;
@@ -15,26 +11,24 @@ public final class BalancedPerformance {
 
     private BalancedPerformance() {}
 
-    public static boolean isEnabled() {
-        return enabled;
-    }
+    public static boolean isEnabled() { return enabled; }
 
     public static void toggle() {
         Minecraft client = Minecraft.getInstance();
         if (client.level == null) return;
-
         if (enabled) {
             restore(client);
-        } else {
-            previousEntityShadows = client.options.entityShadows().get();
-            previousRenderDistance = client.options.renderDistance().get();
-            previousSimulationDistance = client.options.simulationDistance().get();
-
-            client.options.entityShadows().set(false);
-            client.options.renderDistance().set(Math.min(previousRenderDistance, 8));
-            client.options.simulationDistance().set(Math.min(previousSimulationDistance, 5));
-            enabled = true;
+            return;
         }
+
+        previousEntityShadows = client.options.entityShadows().get();
+        previousRenderDistance = client.options.renderDistance().get();
+        previousSimulationDistance = client.options.simulationDistance().get();
+
+        client.options.entityShadows().set(false);
+        client.options.renderDistance().set(Math.min(previousRenderDistance, 6));
+        client.options.simulationDistance().set(Math.min(previousSimulationDistance, 4));
+        enabled = true;
     }
 
     public static void restore() {
