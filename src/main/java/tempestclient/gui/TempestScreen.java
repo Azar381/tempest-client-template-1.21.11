@@ -8,7 +8,6 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import org.lwjgl.glfw.GLFW;
 import tempestclient.BalancedPerformance;
-import tempestclient.FullbrightController;
 
 public class TempestScreen extends Screen {
     private static final int BG = 0xF20B0B10;
@@ -59,14 +58,7 @@ public class TempestScreen extends Screen {
         int x = left + 158;
         int y = top + 104;
         if (activeCategory == 0) {
-            addRenderableWidget(Button.builder(toggleLabel("Fullbright", FullbrightController.isEnabled()),
-                    b -> FullbrightController.toggle()).bounds(x + 305, y, 105, 24).build());
-            addRenderableWidget(Button.builder(Component.literal("Brightness −"),
-                    b -> FullbrightController.setBrightness(FullbrightController.getBrightness() - 0.1))
-                    .bounds(x, y + 42, 125, 24).build());
-            addRenderableWidget(Button.builder(Component.literal("Brightness +"),
-                    b -> FullbrightController.setBrightness(FullbrightController.getBrightness() + 0.1))
-                    .bounds(x + 135, y + 42, 125, 24).build());
+            // Fullbright controls are intentionally unavailable in this compatibility test.
         } else if (activeCategory == 1) {
             addRenderableWidget(Button.builder(toggleLabel("Balanced Performance", BalancedPerformance.isEnabled()),
                     b -> BalancedPerformance.toggle()).bounds(x + 305, y, 105, 24).build());
@@ -133,9 +125,7 @@ public class TempestScreen extends Screen {
 
         int x = left + 158, y = top + 104;
         if (activeCategory == 0) {
-            featureRow(g, x, y, "Fullbright", "Increase world visibility", FullbrightController.isEnabled());
-            g.drawString(font, "Brightness strength", x, y + 34, MUTED);
-            g.drawString(font, Math.round(FullbrightController.getBrightness() * 100) + "%", x + 270, y + 34, TEXT);
+            featureRow(g, x, y, "Fullbright disabled", "Temporarily removed for Mojo compatibility testing", false);
         } else if (activeCategory == 1) {
             featureRow(g, x, y, "Balanced Performance", "Conservative graphics profile", BalancedPerformance.isEnabled());
         } else if (activeCategory == 2) {
@@ -169,9 +159,9 @@ public class TempestScreen extends Screen {
             g.drawString(font, CATEGORIES[i], x + 9, top + 13, TEXT);
             if (i == 0) {
                 g.drawString(font, "Fullbright", x + 9, top + 70, MUTED);
-                g.drawString(font, FullbrightController.isEnabled() ? "ON" : "OFF", x + 9, top + 85, ACCENT);
-                g.drawString(font, "Brightness", x + 9, top + 116, MUTED);
-                g.drawString(font, Math.round(FullbrightController.getBrightness() * 100) + "%", x + 9, top + 131, TEXT);
+                g.drawString(font, "Disabled", x + 9, top + 85, ACCENT);
+                g.drawString(font, "Mojo test", x + 9, top + 116, MUTED);
+                g.drawString(font, "Temporary", x + 9, top + 131, TEXT);
             } else if (i == 1) {
                 g.drawString(font, "Performance", x + 9, top + 70, MUTED);
                 g.drawString(font, BalancedPerformance.isEnabled() ? "ON" : "OFF", x + 9, top + 85, ACCENT);
